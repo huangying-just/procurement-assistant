@@ -82,7 +82,7 @@ cat > .env << EOF
 NODE_ENV=production
 PORT=3855
 DIFY_API_URL=https://api.dify.ai/v1
-DIFY_API_KEY=app-j07Xbg1LZrwfXQ9ubGMMjeA1
+DIFY_API_KEY=your-apikey
 EOF
 ```
 
