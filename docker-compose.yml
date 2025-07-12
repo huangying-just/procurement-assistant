@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  procurement-assistant:
+    build: .
+    ports:
+      - "3855:3855"
+    environment:
+      - NODE_ENV=production
+      - PORT=3855
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - procurement-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - procurement-assistant
+    restart: unless-stopped
+    networks:
+      - procurement-network
+
+networks:
+  procurement-network:
+    driver: bridge 
