@@ -95,12 +95,60 @@ Warning: Module type of file:///path/to/postcss.config.js is not specified and i
 
 已在 `package.json` 中添加 `"type": "module"` 字段修复此警告。
 
+## 问题4：PM2 配置文件错误
+
+### 错误信息
+```
+[PM2][ERROR] File ecosystem.config.js malformated
+Error [ERR_REQUIRE_ESM]: require() of ES Module ecosystem.config.js not supported.
+```
+
+### 解决方案
+
+由于项目使用了 `"type": "module"`，PM2 配置文件需要使用 CommonJS 格式。
+
+**方案1**: 使用 `.cjs` 扩展名（推荐）
+```bash
+# 重命名配置文件
+mv ecosystem.config.js ecosystem.config.cjs
+
+# 启动 PM2
+pm2 start ecosystem.config.cjs
+```
+
+**方案2**: 创建正确的配置文件
+```bash
+cat > ecosystem.config.cjs << 'EOF'
+module.exports = {
+  apps: [{
+    name: 'procurement-assistant',
+    script: 'npm',
+    args: 'run preview',
+    cwd: '/opt/procurement-assistant',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3855
+    },
+    error_file: '/var/log/pm2/procurement-assistant-error.log',
+    out_file: '/var/log/pm2/procurement-assistant-out.log',
+    log_file: '/var/log/pm2/procurement-assistant-combined.log',
+    time: true
+  }]
+};
+EOF
+```
+
 ## 为什么会出现这些问题？
 
 1. **生产安装**: 使用 `npm install --production` 只安装 `dependencies`，不安装 `devDependencies`
 2. **TypeScript 位置**: TypeScript 原本在 `devDependencies` 中，生产环境无法访问
 3. **类型定义缺失**: 环境变量和模块类型定义不完整
 4. **模块系统**: PostCSS 配置文件需要明确的模块类型声明
+5. **ES 模块兼容性**: 添加 `"type": "module"` 后，所有 `.js` 文件都被视为 ES 模块，但 PM2 配置需要 CommonJS 格式
 
 ## 验证构建成功
 
@@ -133,4 +181,5 @@ ls -la dist/
 - `package.json` - 已优化的依赖配置
 - `tsconfig.json` - TypeScript 配置
 - `src/vite-env.d.ts` - 类型定义文件
+- `ecosystem.config.cjs` - PM2 配置文件（CommonJS 格式）
 - `DEPLOYMENT.md` - 完整部署指南 

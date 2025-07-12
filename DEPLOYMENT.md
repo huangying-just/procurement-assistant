@@ -108,8 +108,11 @@ EOF
 ## 3. PM2 配置
 
 ### 3.1 创建 PM2 配置文件
+
+**注意**: 由于项目使用了 ES 模块（`"type": "module"`），PM2 配置文件需要使用 `.cjs` 扩展名。
+
 ```bash
-cat > ecosystem.config.js << 'EOF'
+cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
     name: 'procurement-assistant',
@@ -142,7 +145,7 @@ sudo chown $USER:$USER /var/log/pm2
 ### 3.3 启动应用
 ```bash
 # 使用 PM2 启动应用
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 
 # 保存 PM2 配置
 pm2 save
