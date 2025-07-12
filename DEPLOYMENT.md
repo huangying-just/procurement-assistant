@@ -75,6 +75,25 @@ npm install --production
 npm run build
 ```
 
+**注意**: 如果遇到 `tsc: not found` 错误，说明 TypeScript 编译器未安装。有两种解决方案：
+
+**方案1**: 安装所有依赖（包括开发依赖）
+```bash
+npm install  # 不使用 --production 标志
+npm run build
+```
+
+**方案2**: 全局安装 TypeScript
+```bash
+sudo npm install -g typescript
+npm run build
+```
+
+**方案3**: 使用 npx 运行 TypeScript
+```bash
+npx tsc && npx vite build
+```
+
 ### 2.4 创建环境配置文件
 ```bash
 # 创建环境变量文件
